@@ -5,6 +5,7 @@ This is a study for the lab on: https://www.lisenet.com/2019/ansible-sample-exam
 Create an "automation" user:
 
 useradd automation
+
 passwd automation
 
 Enter the new password: devops
@@ -25,6 +26,3 @@ ln -s /home/automation/lisenet_ex407_sample/plays /home/automation/plays
 
 Access the directory:
 cd ~/plays
-
-
-
