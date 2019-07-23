@@ -20,7 +20,7 @@ Clone the repo:
 git clone git@github.com:erikyami/lisenet_ex407_sample.git
 
 
-Create a link simbolic for directory "plays"
+Create a symbolic link for directory "plays"
 
 ln -s /home/automation/lisenet_ex407_sample/plays /home/automation/plays
 
