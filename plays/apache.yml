@@ -1,0 +1,6 @@
+---
+#Task 10
+- hosts: webservers
+  become: yes
+  roles:
+    - sample-apache

@@ -1,0 +1,16 @@
+---
+#Task 11
+- hosts: proxy
+  become: yes
+
+  roles:
+    - geerlingguy.haproxy
+
+  tasks:
+  - name: Configure Firewall - service http (80)
+    firewalld:
+      service: http
+      immediate: yes
+      permanent: yes
+      state: enabled
+      

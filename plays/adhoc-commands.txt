@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#Copy sshd_config
+ansible all -m copy -a "src=files/sshd_config dest=/etc/ssh/sshd_config owner=root" -b
+
+#Create a vault file
+ansible-vault create secret.yml
+
+#Verify /etc/motd
+ansible all -m shell -a "cat /etc/motd"

@@ -1,0 +1,12 @@
+#/bin/bash
+
+#Task 2
+
+#Create the user automation with password 'devops'
+ansible -i inventory all -m user -a "name=automation password=devops" -u root -k
+
+#Copy the ssh-key
+ansible -i inventory all -m authorized_key -a "user=automation state=present key='{{ lookup('file', '/home/automation/.ssh/id_rsa.pub') }}'" -u root -k
+
+#Configure /etc/sudoers for automation user
+ansible -i inventory all -m lineinfile -a "path=/etc/sudoers state=present line='automation ALL=(ALL) NOPASSWD: ALL'" -u root -k

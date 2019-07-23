@@ -1,0 +1,74 @@
+---
+- name: Configure /dev/sdb1
+  parted:
+    device: /dev/sdb
+    number: 1
+    flags: [ lvm ]
+    part_end: 800MiB
+    state: present
+
+- name: Create VG vg_database
+  lvg:
+    vg: vg_database
+    pvs: /dev/sdb1
+
+- name: Create LV lv_mysql
+  lvol:
+    vg: vg_database
+    lv: lv_mysql
+    size: 512
+
+- name: Create Filesytem on lv_mysql
+  filesystem:
+    fstype: "xfs"
+    dev: /dev/mapper/vg_database-lv_mysql
+
+- name: Create dir /mnt/mysql_backups
+  file:
+    path: /mnt/mysql_backups
+    state: directory
+    mode: 0755
+
+- name: Configure mount lv_mysql
+  mount:
+    path: /mnt/mysql_backups
+    src: /dev/mapper/vg_database-lv_mysql
+    fstype: xfs
+    state: mounted
+
+- name: Install mysql-community-server
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mysql-community-server
+    - MySQL-python
+
+- name: Configure firewalld - port TCP 3306
+  firewalld:
+    port: 3306/tcp
+    permanent: true
+    state: enabled
+    immediate: yes
+
+- name: Enable mysqld start on boot
+  service:
+    name: mysqld
+    state: started
+    enabled: yes
+
+#- name: Configure password root
+#  mysql_user:
+#    name: root
+#    password: "{{ database_password }}"
+#    state: present
+#    priv: "*.*:ALL,GRANT"
+
+- name: Configure template /etc/my.cnf.j2
+  template:
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes 

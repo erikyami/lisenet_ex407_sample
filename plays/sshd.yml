@@ -1,0 +1,25 @@
+---
+#Task 4
+- hosts: all
+  become: yes
+
+  tasks:
+  - name: Configure banner sshd (/etc/motd)
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      insertafter: "^#Banner "
+      line: 'Banner /etc/motd'
+      state: present
+  
+  - name: Configure MaxAuthTries 3
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      insertafter: "^#MaxAuthTries "
+      line: 'MaxAuthTries 3'
+      state: present
+
+  - name: Configure X11Forwarding
+    replace:
+      path: /etc/ssh/sshd_config
+      regexp: "^X11Forwarding yes"
+      replace: 'X11Forwarding no'

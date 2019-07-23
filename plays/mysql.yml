@@ -1,0 +1,8 @@
+---
+#Task 9
+- hosts: database
+  vars_files: 
+    - secret.yml
+
+  roles:
+    - sample-mysql

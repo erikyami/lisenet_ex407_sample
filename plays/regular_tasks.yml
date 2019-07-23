@@ -1,0 +1,11 @@
+---
+# Task 7
+- hosts: proxy
+  become: yes
+
+  tasks:
+  - name: Configure crontab
+    cron:
+      name: Log date
+      hour: "*/1"
+      job: "date >> /var/log/time.log"

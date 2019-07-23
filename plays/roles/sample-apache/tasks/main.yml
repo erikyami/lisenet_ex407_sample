@@ -1,0 +1,33 @@
+---
+- name: Install packages httpd, mod_ssl, php
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - httpd
+    - mod_ssl
+    - php
+
+- name: Enable httpd
+  service:
+    name: httpd
+    enabled: yes
+    state: started
+
+- name: Configure Firewalld - TCP 80, 443
+  firewalld:
+    port: "{{ item }}"
+    immediate: yes
+    permanent: yes
+    state: enabled
+  with_items:
+    - '80/tcp'
+    - '443/tcp'  
+
+- name: Configure template index.html.j2
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    backup: yes
+  notify:
+    - restart apache

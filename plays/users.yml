@@ -1,0 +1,29 @@
+---
+# Task 6
+- hosts: all
+  become: yes
+
+  vars_files:
+    - secret.yml
+    - user_list.yml
+  
+  tasks:
+  - name: Creating users
+    user:
+      name: "{{ item.username }}"
+      uid: "{{ item.uid }}"
+      password: "{{ user_password | password_hash('sha512') }}"
+      shell: /bin/bash
+      groups: wheel
+    with_items: "{{ users }}"
+    when: (( inventory_hostname in groups['webservers'] ) and ( "{{ item.uid  }}" >= "1000" and "{{ item.uid }}" < "2000" )) or (( inventory_hostname in groups['database'] ) and ( "{{ item.uid }}" >= "2000" and "{{ item.uid }}" < "3000" ))
+
+
+  - name: Copying the SSH key
+    authorized_key:
+      user: "{{ item.username }}"
+      state: present
+      key: "{{ lookup('file', '/home/automation/.ssh/id_rsa.pub') }}"
+    with_items: "{{ users }}"
+    when: (( inventory_hostname in groups['webservers'] ) and ( "{{ item.uid  }}" >= "1000" and "{{ item.uid }}" < "2000" )) or (( inventory_hostname in groups['database'] ) and ( "{{ item.uid }}" >= "2000" and "{{ item.uid }}" < "3000" ))
+    tags: sshkey

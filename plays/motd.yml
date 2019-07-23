@@ -1,0 +1,10 @@
+---
+# Task 3
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Configure motd
+      copy:
+        content: '{{ motd }}'
+        dest: /etc/motd
